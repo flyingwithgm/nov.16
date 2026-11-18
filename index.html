@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 22nd Birthday, Mary!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --cream: #fdfbf7;
+            --text-dark: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            color: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- GIFT BOX SCREEN --- */
+        #gift-screen {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        #gift-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .gift-box {
+            font-size: 80px;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.4));
+        }
+
+        .gift-text {
+            margin-top: 20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: 1px;
+        }
+
+        .open-btn {
+            margin-top: 30px;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, var(--gold), #b8941f);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .open-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+        }
+
+        /* --- MAIN CONTENT --- */
+        #main-content {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            max-width: 800px;
+            width: 90%;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: var(--gold);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(253, 251, 247, 0.7);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        /* --- ENVELOPES --- */
+        .envelopes-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .envelope-wrapper {
+            perspective: 1000px;
+            width: 220px;
+            height: 160px;
+            cursor: pointer;
+        }
+
+        .envelope {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .envelope-wrapper.open .envelope {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-front, .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .envelope-front {
+            background: linear-gradient(135deg, var(--gold), #b8941f);
+            color: var(--bg-dark);
+        }
+
+        .envelope-front .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .envelope-front .label {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .envelope-back {
+            background: var(--cream);
+            color: var(--text-dark);
+            transform: rotateX(180deg);
+            text-align: center;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border: 2px solid var(--gold);
+        }
+
+        /* --- FINAL MESSAGE --- */
+        .final-message {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .final-message p {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            line-height: 1.8;
+            color: var(--gold-light);
+            font-style: italic;
+        }
+
+        .signature {
+            margin-top: 25px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 5;
+            animation: floatUp linear forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .envelopes-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .envelope-wrapper {
+                width: 100%;
+                max-width: 280px;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- GIFT SCREEN -->
+    <div id="gift-screen">
+        <div class="gift-box">🎁</div>
+        <div class="gift-text">A special surprise for you</div>
+        <button class="open-btn" onclick="openGift()">Open Your Gift</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+        <h1>Happy 22nd Birthday, Mary!</h1>
+        <p class="subtitle">Tap the envelopes below to reveal your birthday wishes</p>
+
+        <div class="envelopes-container">
+            <!-- Envelope 1: Pride -->
+            <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
+                <div class="envelope">
+                    <div class="envelope-front">
+                        <div class="icon">💌</div>
+                        <div class="label">Pride</div>
+                    </div>
+                    <div class="envelope-back">
+                        <p>I am so incredibly proud of the woman you are becoming. Your dedication, grace, and hard work inspire everyone around you.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Envelope 2: God's Favor -->
+            <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
+                <div class="envelope">
+                    <div class="envelope-front">
+                        <div class="icon">🙏</div>
+                        <div class="label">Blessings</div>
+                    </div>
+                    <div class="envelope-back">
+                        <p>May God's favor surround you always. I pray for your success, good health, long life, and breakthroughs in every area of your life.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Envelope 3: Strength & Kindness -->
+            <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
+                <div class="envelope">
+                    <div class="envelope-front">
+                        <div class="icon">💛</div>
+                        <div class="label">Strength</div>
+                    </div>
+                    <div class="envelope-back">
+                        <p>Your kindness and inner strength are your superpowers. Never lose that beautiful, caring heart of yours.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="final-message">
+            <p>
+                "To my amazing sister on your 22nd birthday. Watching you grow has been one of my greatest joys. 
+                May this new chapter bring you boundless happiness, prosperity, and the courage to become the absolute best version of yourself. 
+                Keep shining, keep believing, and know that I will always be in your corner, cheering you on."
+            </p>
+            <div class="signature">With all my love, George</div>
+        </div>
+    </div>
+
+    <script>
+        function openGift() {
+            const giftScreen = document.getElementById('gift-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            // Hide gift screen
+            giftScreen.classList.add('hidden');
+            
+            // Show main content and launch confetti/hearts
+            setTimeout(() => {
+                mainContent.classList.add('visible');
+                launchParticles();
+            }, 500);
+        }
+
+        function launchParticles() {
+            const symbols = ['❤️', '✨', '🎉', '🌟', '💛'];
+            
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    particle.style.left = Math.random() * 100 + 'vw';
+                    particle.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                    particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                    particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                    document.body.appendChild(particle);
+                    
+                    // Clean up DOM after animation
+                    setTimeout(() => particle.remove(), 6000);
+                }, i * 50);
+            }
+        }
+    </script>
+</body>
+</html>
